@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мой сайт с расширенной админкой</title>
-    <style id="site-styles">
+    <title>Мой сайт с безопасной админкой</title>
+    <style>
         :root {
             --primary-color: #2c3e50;
             --secondary-color: #3498db;
@@ -209,6 +209,77 @@
             border-radius: 5px;
             border: 1px solid #eee;
         }
+        
+        /* Стили для изображений */
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            margin: 10px 0;
+            display: block;
+        }
+        
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .gallery-item {
+            position: relative;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .gallery-item .delete-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+        }
+        
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        /* Защита от brute-force */
+        .login-attempts-warning {
+            color: #e74c3c;
+            font-weight: bold;
+            display: none;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -220,6 +291,7 @@
                 <ul class="nav-links" id="main-menu">
                     <li><a href="#home">Главная</a></li>
                     <li><a href="#about">О нас</a></li>
+                    <li><a href="#gallery">Галерея</a></li>
                     <li><a href="#contact">Контакты</a></li>
                     <li><a href="#" id="admin-login-link">Вход</a></li>
                 </ul>
@@ -233,19 +305,28 @@
     </main>
 
     <!-- Форма входа -->
-    <div id="login-modal" style="display: none;">
-        <div class="login-form">
-            <h2>Вход в админку</h2>
-            <div class="form-group">
-                <label for="username">Логин:</label>
-                <input type="text" id="username" placeholder="Введите логин">
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <div class="login-form">
+                <h2>Вход в админку</h2>
+                <div class="form-group">
+                    <label for="username">Логин:</label>
+                    <input type="text" id="username" placeholder="Введите логин" autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Пароль:</label>
+                    <input type="password" id="password" placeholder="Введите пароль" autocomplete="current-password">
+                </div>
+                <div class="form-group">
+                    <label for="totp-code">Код 2FA:</label>
+                    <input type="text" id="totp-code" placeholder="Введите код из приложения" maxlength="6">
+                </div>
+                <div class="login-attempts-warning" id="login-attempts-warning">
+                    Осталось попыток: <span id="remaining-attempts">3</span>
+                </div>
+                <button class="btn" id="login-btn" onclick="login()">Войти</button>
+                <button class="btn btn-danger" onclick="hideLogin()">Отмена</button>
             </div>
-            <div class="form-group">
-                <label for="password">Пароль:</label>
-                <input type="password" id="password" placeholder="Введите пароль">
-            </div>
-            <button class="btn" onclick="login()">Войти</button>
-            <button class="btn btn-danger" onclick="hideLogin()">Отмена</button>
         </div>
     </div>
 
@@ -256,6 +337,8 @@
             <div class="tab" onclick="openTab('design-tab')">Дизайн</div>
             <div class="tab" onclick="openTab('sections-tab')">Разделы</div>
             <div class="tab" onclick="openTab('menu-tab')">Меню</div>
+            <div class="tab" onclick="openTab('media-tab')">Медиа</div>
+            <div class="tab" onclick="openTab('security-tab')">Безопасность</div>
         </div>
         
         <div id="content-tab" class="tab-content active">
@@ -329,6 +412,53 @@
                 <!-- Пункты меню будут загружаться динамически -->
             </ul>
         </div>
+        
+        <div id="media-tab" class="tab-content">
+            <h2>Управление медиафайлами</h2>
+            <div class="form-group">
+                <label>Загрузить изображение:</label>
+                <input type="file" id="image-upload" accept="image/*">
+                <div id="image-preview-container" style="margin-top: 10px;"></div>
+                <button class="btn" onclick="uploadImage()" style="margin-top: 10px;">Загрузить</button>
+            </div>
+            
+            <h3 style="margin-top: 30px;">Галерея изображений</h3>
+            <div class="gallery" id="image-gallery">
+                <!-- Изображения будут загружаться динамически -->
+            </div>
+        </div>
+        
+        <div id="security-tab" class="tab-content">
+            <h2>Настройки безопасности</h2>
+            <div class="form-group">
+                <label>Изменить пароль:</label>
+                <input type="password" id="new-password" placeholder="Новый пароль">
+                <input type="password" id="confirm-password" placeholder="Подтвердите пароль" style="margin-top: 10px;">
+                <button class="btn" onclick="changePassword()" style="margin-top: 10px;">Изменить пароль</button>
+            </div>
+            
+            <div class="form-group" style="margin-top: 20px;">
+                <label>Двухфакторная аутентификация:</label>
+                <div id="totp-status" style="margin: 10px 0;">
+                    <!-- Статус 2FA будет загружаться динамически -->
+                </div>
+                <button class="btn" id="toggle-2fa-btn" onclick="toggle2FA()">Включить 2FA</button>
+                <div id="totp-setup" style="display: none; margin-top: 20px;">
+                    <img id="totp-qr" src="" alt="QR код">
+                    <p>Секретный ключ: <span id="totp-secret"></span></p>
+                    <p>Введите код из приложения для подтверждения:</p>
+                    <input type="text" id="totp-verify-code" placeholder="6-значный код">
+                    <button class="btn" onclick="verify2FA()">Подтвердить</button>
+                </div>
+            </div>
+            
+            <div class="form-group" style="margin-top: 20px;">
+                <label>История входов:</label>
+                <div id="login-history" style="margin-top: 10px;">
+                    <!-- История будет загружаться динамически -->
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Подвал -->
@@ -361,6 +491,11 @@
                     content: "<h2>О нашей компании</h2><p>Наша компания работает на рынке более 5 лет. Мы предлагаем качественные услуги.</p>"
                 },
                 {
+                    id: "gallery",
+                    title: "Галерея",
+                    content: "<h2>Наша галерея</h2><div class='gallery' id='user-gallery'></div>"
+                },
+                {
                     id: "contact",
                     title: "Контакты",
                     content: "<h2>Как с нами связаться</h2><p>Email: info@example.com<br>Телефон: +7 (123) 456-78-90</p>"
@@ -369,31 +504,79 @@
             menu: [
                 { text: "Главная", link: "#home" },
                 { text: "О нас", link: "#about" },
+                { text: "Галерея", link: "#gallery" },
                 { text: "Контакты", link: "#contact" }
             ],
-            footer: "&copy; 2023 МойСайт. Все права защищены."
+            media: [],
+            footer: "&copy; 2023 МойСайт. Все права защищены.",
+            security: {
+                // В реальном приложении это должно храниться на сервере
+                passwordHash: "", // Хеш пароля (в демо - просто пароль)
+                salt: "", // Соль для хеширования
+                totpSecret: "", // Секрет для 2FA
+                loginAttempts: 0, // Количество неудачных попыток входа
+                lastLoginAttempt: 0, // Время последней попытки входа
+                loginHistory: [] // История входов
+            }
         };
 
-        // Данные для входа
-        const adminCredentials = {
-            login: "admin",
-            password: "12345"
-        };
+        // Текущий пользователь
+        let currentUser = null;
+        let loginAttemptsLeft = 3;
+        let tempTotpSecret = "";
 
         // Инициализация сайта
         document.addEventListener('DOMContentLoaded', function() {
+            // В демо-версии устанавливаем простой пароль
+            siteData.security.passwordHash = "admin123"; // В реальном приложении нужно использовать хеширование
+            
             loadSite();
             
             // Обработчик входа
             document.getElementById('admin-login-link').addEventListener('click', function(e) {
                 e.preventDefault();
                 if (this.textContent === 'Вход') {
-                    document.getElementById('login-modal').style.display = 'block';
+                    showLogin();
                 } else {
                     logout();
                 }
             });
+            
+            // Обработчик загрузки изображений
+            document.getElementById('image-upload').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        document.getElementById('image-preview-container').innerHTML = 
+                            `<img src="${event.target.result}" class="image-preview" alt="Предпросмотр">`;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Загружаем данные из localStorage
+            loadFromLocalStorage();
         });
+
+        // Показать форму входа
+        function showLogin() {
+            document.getElementById('login-modal').style.display = 'flex';
+            document.getElementById('username').focus();
+            
+            // Сброс предупреждений
+            document.getElementById('login-attempts-warning').style.display = 'none';
+            document.getElementById('remaining-attempts').textContent = '3';
+            loginAttemptsLeft = 3;
+        }
+
+        // Скрыть форму входа
+        function hideLogin() {
+            document.getElementById('login-modal').style.display = 'none';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('totp-code').value = '';
+        }
 
         // Загрузка сайта
         function loadSite() {
@@ -411,11 +594,15 @@
             
             // Загружаем подвал
             document.getElementById('footer-text').innerHTML = siteData.footer;
+            
+            // Загружаем галерею для пользователей
+            renderUserGallery();
         }
 
         // Применение дизайна
         function applyDesign() {
-            const style = document.getElementById('site-styles');
+            const style = document.createElement('style');
+            style.id = 'site-styles';
             const design = siteData.design;
             
             style.textContent = `
@@ -426,8 +613,33 @@
                     --bg-color: ${design.bgColor};
                     --header-height: ${design.headerHeight};
                 }
-                ${style.textContent.split(':root')[1]}
+                body {
+                    line-height: 1.6;
+                    color: var(--text-color);
+                    background-color: var(--bg-color);
+                }
+                header {
+                    background: var(--primary-color);
+                    height: var(--header-height);
+                }
+                .nav-links a:hover {
+                    color: var(--secondary-color);
+                }
+                .btn {
+                    background: var(--secondary-color);
+                }
+                footer {
+                    background: var(--primary-color);
+                }
             `;
+            
+            // Удаляем старые стили
+            const oldStyle = document.getElementById('site-styles');
+            if (oldStyle) {
+                oldStyle.remove();
+            }
+            
+            document.head.appendChild(style);
         }
 
         // Рендер разделов
@@ -439,6 +651,7 @@
                 const sectionHTML = `
                     <section id="${section.id}" class="content-block">
                         <div id="${section.id}-content">${section.content}</div>
+                        ${currentUser ? `
                         <div class="admin-panel" id="${section.id}-admin">
                             <div class="admin-controls">
                                 <h3>Редактировать "${section.title}"</h3>
@@ -447,9 +660,28 @@
                                 <button class="btn btn-danger" onclick="deleteSection('${section.id}')">Удалить раздел</button>
                             </div>
                         </div>
+                        ` : ''}
                     </section>
                 `;
                 content.innerHTML += sectionHTML;
+            });
+        }
+
+        // Рендер галереи для пользователей
+        function renderUserGallery() {
+            const gallery = document.getElementById('user-gallery');
+            if (!gallery) return;
+            
+            gallery.innerHTML = '';
+            
+            siteData.media.forEach((image, index) => {
+                if (image.type === 'image') {
+                    gallery.innerHTML += `
+                        <div class="gallery-item">
+                            <img src="${image.url}" alt="Изображение ${index + 1}">
+                        </div>
+                    `;
+                }
             });
         }
 
@@ -466,42 +698,102 @@
             
             // Добавляем кнопку входа
             const li = document.createElement('li');
-            li.innerHTML = '<a href="#" id="admin-login-link">Вход</a>';
+            li.innerHTML = `<a href="#" id="admin-login-link">${currentUser ? 'Выход' : 'Вход'}</a>`;
             menu.appendChild(li);
             
             // Обновляем обработчик
             document.getElementById('admin-login-link').addEventListener('click', function(e) {
                 e.preventDefault();
                 if (this.textContent === 'Вход') {
-                    document.getElementById('login-modal').style.display = 'block';
+                    showLogin();
                 } else {
                     logout();
                 }
             });
         }
 
-        // Вход в админку
+        // Вход в админку с улучшенной безопасностью
         function login() {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
+            const totpCode = document.getElementById('totp-code').value;
             
-            if (username === adminCredentials.login && password === adminCredentials.password) {
-                // Показываем админ-панель
-                document.getElementById('admin-panel').style.display = 'block';
-                
-                // Меняем ссылку на выход
-                document.getElementById('admin-login-link').textContent = 'Выход';
-                
-                // Загружаем редактор контента
-                loadContentEditor();
-                loadSectionsList();
-                loadMenuItems();
-                
-                hideLogin();
-                alert('Вы успешно вошли в админку!');
-            } else {
-                alert('Неверный логин или пароль!');
+            // Проверка попыток входа
+            const now = Date.now();
+            const lastAttempt = siteData.security.lastLoginAttempt || 0;
+            const timeSinceLastAttempt = (now - lastAttempt) / 1000; // в секундах
+            
+            // Если было больше 3 попыток, ждем 5 минут
+            if (siteData.security.loginAttempts >= 3 && timeSinceLastAttempt < 300) {
+                const waitTime = Math.ceil((300 - timeSinceLastAttempt) / 60);
+                alert(`Слишком много попыток входа. Попробуйте через ${waitTime} минут.`);
+                return;
             }
+            
+            // Проверка логина и пароля
+            if (username !== 'admin' || password !== siteData.security.passwordHash) {
+                siteData.security.loginAttempts++;
+                siteData.security.lastLoginAttempt = now;
+                loginAttemptsLeft--;
+                
+                document.getElementById('login-attempts-warning').style.display = 'block';
+                document.getElementById('remaining-attempts').textContent = loginAttemptsLeft;
+                
+                if (loginAttemptsLeft <= 0) {
+                    alert('Слишком много неудачных попыток. Попробуйте позже.');
+                    hideLogin();
+                } else {
+                    alert('Неверный логин или пароль!');
+                }
+                
+                saveToLocalStorage();
+                return;
+            }
+            
+            // Проверка 2FA, если включена
+            if (siteData.security.totpSecret) {
+                if (!totpCode || !verifyTOTP(totpCode, siteData.security.totpSecret)) {
+                    alert('Неверный код двухфакторной аутентификации!');
+                    return;
+                }
+            }
+            
+            // Успешный вход
+            currentUser = {
+                username: username,
+                loginTime: now
+            };
+            
+            // Записываем в историю
+            siteData.security.loginHistory.unshift({
+                time: now,
+                ip: '127.0.0.1', // В реальном приложении получаем IP пользователя
+                userAgent: navigator.userAgent
+            });
+            
+            // Ограничиваем историю 10 записями
+            if (siteData.security.loginHistory.length > 10) {
+                siteData.security.loginHistory.pop();
+            }
+            
+            // Сбрасываем счетчик попыток
+            siteData.security.loginAttempts = 0;
+            
+            // Показываем админ-панель
+            document.getElementById('admin-panel').style.display = 'block';
+            
+            // Меняем ссылку на выход
+            document.getElementById('admin-login-link').textContent = 'Выход';
+            
+            // Загружаем редакторы
+            loadContentEditor();
+            loadSectionsList();
+            loadMenuItems();
+            loadMediaGallery();
+            loadSecuritySettings();
+            
+            hideLogin();
+            saveToLocalStorage();
         }
 
         // Выход из админки
@@ -509,15 +801,16 @@
             // Скрываем админ-панель
             document.getElementById('admin-panel').style.display = 'none';
             
+            // Сбрасываем текущего пользователя
+            currentUser = null;
+            
             // Возвращаем ссылку на вход
             document.getElementById('admin-login-link').textContent = 'Вход';
             
+            // Перезагружаем страницу, чтобы скрыть админ-элементы
+            loadSite();
+            
             alert('Вы вышли из админки!');
-        }
-
-        // Скрыть форму входа
-        function hideLogin() {
-            document.getElementById('login-modal').style.display = 'none';
         }
 
         // Обновление контента раздела
@@ -591,7 +884,24 @@
                     --bg-color: ${design.bgColor};
                     --header-height: ${design.headerHeight};
                 }
-                ${style.textContent.split(':root')[1]}
+                body {
+                    line-height: 1.6;
+                    color: var(--text-color);
+                    background-color: var(--bg-color);
+                }
+                header {
+                    background: var(--primary-color);
+                    height: var(--header-height);
+                }
+                .nav-links a:hover {
+                    color: var(--secondary-color);
+                }
+                .btn {
+                    background: var(--secondary-color);
+                }
+                footer {
+                    background: var(--primary-color);
+                }
             `;
         }
 
@@ -725,33 +1035,4 @@
             });
         }
 
-        // Удаление пункта меню
-        function deleteMenuItem(index) {
-            if (!confirm(`Удалить этот пункт меню?`)) return;
-            
-            siteData.menu.splice(index, 1);
-            renderMenu();
-            loadMenuItems();
-            saveToLocalStorage();
-            
-            alert('Пункт меню удален!');
-        }
-
-        // Сохранение в LocalStorage
-        function saveToLocalStorage() {
-            localStorage.setItem('siteData', JSON.stringify(siteData));
-        }
-
-        // Загрузка из LocalStorage
-        function loadFromLocalStorage() {
-            const savedData = localStorage.getItem('siteData');
-            if (savedData) {
-                siteData = JSON.parse(savedData);
-            }
-        }
-
-        // При загрузке проверяем LocalStorage
-        loadFromLocalStorage();
-    </script>
-</body>
-</html>
+        // Удаление пункта
