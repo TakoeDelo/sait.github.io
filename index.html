@@ -3,29 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мой одностраничный сайт</title>
+    <title>Мой сайт с админкой</title>
     <style>
-        /* Reset и базовые стили */
+        /* Общие стили */
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
+        
         body {
             line-height: 1.6;
             color: #333;
-            background-color: #f9f9f9;
+            background-color: #f5f5f5;
         }
-
-        /* Основные стили */
+        
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
         }
-
+        
+        /* Шапка */
         header {
             background: #2c3e50;
             color: white;
@@ -35,234 +35,295 @@
             top: 0;
             z-index: 1000;
         }
-
+        
         nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-
+        
         .logo {
             font-size: 24px;
             font-weight: bold;
         }
-
+        
         .nav-links {
             display: flex;
             list-style: none;
         }
-
+        
         .nav-links li {
-            margin-left: 30px;
+            margin-left: 20px;
         }
-
+        
         .nav-links a {
             color: white;
             text-decoration: none;
             transition: color 0.3s;
         }
-
+        
         .nav-links a:hover {
             color: #3498db;
         }
-
-        .hero {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            background: linear-gradient(rgba(0, 0, 0, 0.5), url('https://via.placeholder.com/1920x1080') no-repeat center center/cover;
-            color: white;
-            text-align: center;
-            padding-top: 80px;
+        
+        /* Основной контент */
+        main {
+            margin-top: 80px;
+            padding: 40px 0;
         }
-
-        .hero-content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .hero h1 {
-            font-size: 48px;
-            margin-bottom: 20px;
-        }
-
-        .hero p {
-            font-size: 20px;
+        
+        .content-block {
+            background: white;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             margin-bottom: 30px;
         }
-
+        
+        /* Форма входа */
+        .login-form {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .login-form h2 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
         .btn {
             display: inline-block;
             background: #3498db;
             color: white;
-            padding: 12px 30px;
-            border-radius: 5px;
-            text-decoration: none;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
             transition: background 0.3s;
         }
-
+        
         .btn:hover {
             background: #2980b9;
         }
-
-        section {
-            padding: 80px 0;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 50px;
-            font-size: 36px;
-        }
-
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-
-        .feature {
-            background: white;
-            padding: 30px;
+        
+        /* Админ-панель */
+        .admin-panel {
+            display: none;
+            background: #f8f9fa;
+            padding: 20px;
             border-radius: 5px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            text-align: center;
+            margin-top: 30px;
+            border: 1px solid #ddd;
         }
-
-        .feature i {
-            font-size: 40px;
-            color: #3498db;
+        
+        .admin-controls {
             margin-bottom: 20px;
         }
-
-        .feature h3 {
+        
+        .admin-controls h3 {
             margin-bottom: 15px;
         }
-
+        
+        .edit-area {
+            width: 100%;
+            min-height: 100px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        
+        /* Подвал */
         footer {
             background: #2c3e50;
             color: white;
             text-align: center;
-            padding: 30px 0;
+            padding: 20px 0;
             margin-top: 50px;
-        }
-
-        /* Адаптивность */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-
-            .hero h1 {
-                font-size: 36px;
-            }
-
-            .hero p {
-                font-size: 18px;
-            }
         }
     </style>
 </head>
 <body>
+    <!-- Шапка -->
     <header>
         <div class="container">
             <nav>
-                <div class="logo">ТакоеДело</div>
+                <div class="logo">МойСайт</div>
                 <ul class="nav-links">
-                    <li><a href="#home">Самая Главная</a></li>
-                    <li><a href="#features">Возможности</a></li>
+                    <li><a href="#home">Главная</a></li>
                     <li><a href="#about">О нас</a></li>
                     <li><a href="#contact">Контакты</a></li>
+                    <li><a href="#" id="admin-login-link">Вход</a></li>
                 </ul>
             </nav>
         </div>
     </header>
 
-    <section id="home" class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h1>Вэлкам</h1>
-                <p>Мы делаем мир лучше </p>
-                <a href="#contact" class="btn">Пиши сюда, мы так ждём</a>
+    <!-- Основной контент -->
+    <main class="container">
+        <!-- Блок 1 -->
+        <section id="home" class="content-block">
+            <h2>Добро пожаловать</h2>
+            <div id="welcome-text">
+                <p>Это главная страница моего сайта. Здесь вы можете разместить любое содержимое.</p>
             </div>
-        </div>
-    </section>
-
-    <section id="features" class="features-section">
-        <div class="container">
-            <h2 class="section-title">Наши преимущества</h2>
-            <div class="features">
-                <div class="feature">
-                    <i>🔧</i>
-                    <h3>Качество</h3>
-                    <p>Мы используем только проверенные технологии и материалы</p>
-                </div>
-                <div class="feature">
-                    <i>⚡</i>
-                    <h3>Скорость</h3>
-                    <p>Быстрое выполнение задач без потери качества</p>
-                </div>
-                <div class="feature">
-                    <i>💡</i>
-                    <h3>Инновации</h3>
-                    <p>Постоянное внедрение новых технологий и подходов</p>
+            
+            <!-- Админ-панель для этого блока -->
+            <div class="admin-panel" id="welcome-admin">
+                <div class="admin-controls">
+                    <h3>Редактировать текст приветствия</h3>
+                    <textarea class="edit-area" id="welcome-edit"><p>Это главная страница моего сайта. Здесь вы можете разместить любое содержимое.</p></textarea>
+                    <button class="btn" onclick="updateContent('welcome-text', 'welcome-edit')">Сохранить</button>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section id="about" class="about-section">
-        <div class="container">
-            <h2 class="section-title">О нашей компании</h2>
-            <p style="text-align: center; max-width: 800px; margin: 0 auto;">
-                Мы - команда профессионалов, работающая на рынке более 10 лет. 
-                Наша миссия - помогать клиентам достигать их целей с помощью 
-                современных технологий и индивидуального подхода.
-            </p>
-        </div>
-    </section>
+        <!-- Блок 2 -->
+        <section id="about" class="content-block">
+            <h2>О нас</h2>
+            <div id="about-text">
+                <p>Наша компания работает на рынке более 5 лет. Мы предлагаем качественные услуги.</p>
+            </div>
+            
+            <!-- Админ-панель для этого блока -->
+            <div class="admin-panel" id="about-admin">
+                <div class="admin-controls">
+                    <h3>Редактировать текст "О нас"</h3>
+                    <textarea class="edit-area" id="about-edit"><p>Наша компания работает на рынке более 5 лет. Мы предлагаем качественные услуги.</p></textarea>
+                    <button class="btn" onclick="updateContent('about-text', 'about-edit')">Сохранить</button>
+                </div>
+            </div>
+        </section>
 
-    <section id="contact" class="contact-section">
-        <div class="container">
-            <h2 class="section-title">Свяжитесь с нами</h2>
-            <form id="contact-form" style="max-width: 500px; margin: 0 auto;">
-                <div style="margin-bottom: 20px;">
-                    <input type="text" placeholder="Ваше имя" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px;">
+        <!-- Блок 3 -->
+        <section id="contact" class="content-block">
+            <h2>Контакты</h2>
+            <div id="contact-text">
+                <p>Email: info@example.com<br>Телефон: +7 (123) 456-78-90</p>
+            </div>
+            
+            <!-- Админ-панель для этого блока -->
+            <div class="admin-panel" id="contact-admin">
+                <div class="admin-controls">
+                    <h3>Редактировать контакты</h3>
+                    <textarea class="edit-area" id="contact-edit"><p>Email: info@example.com<br>Телефон: +7 (123) 456-78-90</p></textarea>
+                    <button class="btn" onclick="updateContent('contact-text', 'contact-edit')">Сохранить</button>
                 </div>
-                <div style="margin-bottom: 20px;">
-                    <input type="email" placeholder="Ваш email" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px;">
-                </div>
-                <div style="margin-bottom: 20px;">
-                    <textarea placeholder="Ваше сообщение" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; height: 150px;"></textarea>
-                </div>
-                <button type="submit" class="btn" style="border: none; cursor: pointer;">Отправить</button>
-            </form>
-        </div>
-    </section>
+            </div>
+        </section>
+    </main>
 
+    <!-- Форма входа -->
+    <div id="login-modal" style="display: none;">
+        <div class="login-form">
+            <h2>Вход в админку</h2>
+            <div class="form-group">
+                <label for="username">Логин:</label>
+                <input type="text" id="username" placeholder="Введите логин">
+            </div>
+            <div class="form-group">
+                <label for="password">Пароль:</label>
+                <input type="password" id="password" placeholder="Введите пароль">
+            </div>
+            <button class="btn" onclick="login()">Войти</button>
+            <button class="btn" onclick="hideLogin()" style="background: #ccc; margin-left: 10px;">Отмена</button>
+        </div>
+    </div>
+
+    <!-- Подвал -->
     <footer>
         <div class="container">
-            <p>&copy; 2024 МойСайт. Все права защищены.</p>
+            <p>&copy; 2023 МойСайт. Все права защищены.</p>
         </div>
     </footer>
 
     <script>
-        // Плавная прокрутка для якорных ссылок
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
-
-        // Обработка формы
-        document.getElementById('contact-form').addEventListener('submit', function(e) {
+        // Данные для входа (в реальном проекте храните на сервере)
+        const adminCredentials = {
+            login: "admin",
+            password: "12345"
+        };
+        
+        // Показываем/скрываем форму входа
+        document.getElementById('admin-login-link').addEventListener('click', function(e) {
             e.preventDefault();
-            alert('Спасибо за ваше сообщение! Мы свяжемся с вами в ближайшее время.');
-            this.reset();
+            document.getElementById('login-modal').style.display = 'block';
         });
+        
+        function hideLogin() {
+            document.getElementById('login-modal').style.display = 'none';
+        }
+        
+        // Функция входа
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username === adminCredentials.login && password === adminCredentials.password) {
+                // Показываем админ-панели
+                const adminPanels = document.querySelectorAll('.admin-panel');
+                adminPanels.forEach(panel => {
+                    panel.style.display = 'block';
+                });
+                
+                // Меняем ссылку на выход
+                document.getElementById('admin-login-link').textContent = 'Выход';
+                document.getElementById('admin-login-link').onclick = logout;
+                
+                hideLogin();
+                alert('Вы успешно вошли в админку!');
+            } else {
+                alert('Неверный логин или пароль!');
+            }
+        }
+        
+        // Функция выхода
+        function logout(e) {
+            e.preventDefault();
+            
+            // Скрываем админ-панели
+            const adminPanels = document.querySelectorAll('.admin-panel');
+            adminPanels.forEach(panel => {
+                panel.style.display = 'none';
+            });
+            
+            // Возвращаем ссылку на вход
+            document.getElementById('admin-login-link').textContent = 'Вход';
+            document.getElementById('admin-login-link').onclick = function(e) {
+                e.preventDefault();
+                document.getElementById('login-modal').style.display = 'block';
+            };
+            
+            alert('Вы вышли из админки!');
+        }
+        
+        // Функция обновления контента
+        function updateContent(targetId, sourceId) {
+            const content = document.getElementById(sourceId).value;
+            document.getElementById(targetId).innerHTML = content;
+            alert('Изменения сохранены!');
+        }
     </script>
 </body>
 </html>
