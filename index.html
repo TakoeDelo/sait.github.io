@@ -3,9 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мой сайт с админкой</title>
-    <style>
-        /* Общие стили */
+    <title>Мой сайт с расширенной админкой</title>
+    <style id="site-styles">
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --text-color: #333;
+            --bg-color: #f5f5f5;
+            --header-height: 80px;
+        }
+        
         * {
             box-sizing: border-box;
             margin: 0;
@@ -15,8 +22,8 @@
         
         body {
             line-height: 1.6;
-            color: #333;
-            background-color: #f5f5f5;
+            color: var(--text-color);
+            background-color: var(--bg-color);
         }
         
         .container {
@@ -25,15 +32,15 @@
             padding: 0 20px;
         }
         
-        /* Шапка */
         header {
-            background: #2c3e50;
+            background: var(--primary-color);
             color: white;
             padding: 20px 0;
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
+            height: var(--header-height);
         }
         
         nav {
@@ -63,12 +70,11 @@
         }
         
         .nav-links a:hover {
-            color: #3498db;
+            color: var(--secondary-color);
         }
         
-        /* Основной контент */
         main {
-            margin-top: 80px;
+            margin-top: var(--header-height);
             padding: 40px 0;
         }
         
@@ -80,7 +86,6 @@
             margin-bottom: 30px;
         }
         
-        /* Форма входа */
         .login-form {
             max-width: 400px;
             margin: 50px auto;
@@ -88,11 +93,6 @@
             background: white;
             border-radius: 5px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .login-form h2 {
-            margin-bottom: 20px;
-            text-align: center;
         }
         
         .form-group {
@@ -105,7 +105,7 @@
             font-weight: bold;
         }
         
-        .form-group input {
+        .form-group input, .form-group select, .form-group textarea {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
@@ -114,20 +114,25 @@
         
         .btn {
             display: inline-block;
-            background: #3498db;
+            background: var(--secondary-color);
             color: white;
             padding: 10px 20px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             transition: background 0.3s;
+            margin-right: 10px;
+            margin-bottom: 10px;
         }
         
         .btn:hover {
-            background: #2980b9;
+            opacity: 0.9;
         }
         
-        /* Админ-панель */
+        .btn-danger {
+            background: #e74c3c;
+        }
+        
         .admin-panel {
             display: none;
             background: #f8f9fa;
@@ -141,10 +146,6 @@
             margin-bottom: 20px;
         }
         
-        .admin-controls h3 {
-            margin-bottom: 15px;
-        }
-        
         .edit-area {
             width: 100%;
             min-height: 100px;
@@ -154,13 +155,59 @@
             margin-bottom: 10px;
         }
         
-        /* Подвал */
         footer {
-            background: #2c3e50;
+            background: var(--primary-color);
             color: white;
             text-align: center;
             padding: 20px 0;
             margin-top: 50px;
+        }
+        
+        /* Стили для админки */
+        .admin-container {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 5px;
+            margin-top: 30px;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+        }
+        
+        .tab.active {
+            border-color: #ddd;
+            border-bottom-color: white;
+            background: white;
+            margin-bottom: -1px;
+        }
+        
+        .section-item {
+            background: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #eee;
         }
     </style>
 </head>
@@ -169,8 +216,8 @@
     <header>
         <div class="container">
             <nav>
-                <div class="logo">МойСайт</div>
-                <ul class="nav-links">
+                <div class="logo" id="site-logo">МойСайт</div>
+                <ul class="nav-links" id="main-menu">
                     <li><a href="#home">Главная</a></li>
                     <li><a href="#about">О нас</a></li>
                     <li><a href="#contact">Контакты</a></li>
@@ -181,57 +228,8 @@
     </header>
 
     <!-- Основной контент -->
-    <main class="container">
-        <!-- Блок 1 -->
-        <section id="home" class="content-block">
-            <h2>Добро пожаловать</h2>
-            <div id="welcome-text">
-                <p>Это главная страница моего сайта. Здесь вы можете разместить любое содержимое.</p>
-            </div>
-            
-            <!-- Админ-панель для этого блока -->
-            <div class="admin-panel" id="welcome-admin">
-                <div class="admin-controls">
-                    <h3>Редактировать текст приветствия</h3>
-                    <textarea class="edit-area" id="welcome-edit"><p>Это главная страница моего сайта. Здесь вы можете разместить любое содержимое.</p></textarea>
-                    <button class="btn" onclick="updateContent('welcome-text', 'welcome-edit')">Сохранить</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Блок 2 -->
-        <section id="about" class="content-block">
-            <h2>О нас</h2>
-            <div id="about-text">
-                <p>Наша компания работает на рынке более 5 лет. Мы предлагаем качественные услуги.</p>
-            </div>
-            
-            <!-- Админ-панель для этого блока -->
-            <div class="admin-panel" id="about-admin">
-                <div class="admin-controls">
-                    <h3>Редактировать текст "О нас"</h3>
-                    <textarea class="edit-area" id="about-edit"><p>Наша компания работает на рынке более 5 лет. Мы предлагаем качественные услуги.</p></textarea>
-                    <button class="btn" onclick="updateContent('about-text', 'about-edit')">Сохранить</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Блок 3 -->
-        <section id="contact" class="content-block">
-            <h2>Контакты</h2>
-            <div id="contact-text">
-                <p>Email: info@example.com<br>Телефон: +7 (123) 456-78-90</p>
-            </div>
-            
-            <!-- Админ-панель для этого блока -->
-            <div class="admin-panel" id="contact-admin">
-                <div class="admin-controls">
-                    <h3>Редактировать контакты</h3>
-                    <textarea class="edit-area" id="contact-edit"><p>Email: info@example.com<br>Телефон: +7 (123) 456-78-90</p></textarea>
-                    <button class="btn" onclick="updateContent('contact-text', 'contact-edit')">Сохранить</button>
-                </div>
-            </div>
-        </section>
+    <main class="container" id="site-content">
+        <!-- Разделы будут добавляться динамически -->
     </main>
 
     <!-- Форма входа -->
@@ -247,49 +245,257 @@
                 <input type="password" id="password" placeholder="Введите пароль">
             </div>
             <button class="btn" onclick="login()">Войти</button>
-            <button class="btn" onclick="hideLogin()" style="background: #ccc; margin-left: 10px;">Отмена</button>
+            <button class="btn btn-danger" onclick="hideLogin()">Отмена</button>
+        </div>
+    </div>
+
+    <!-- Админ-панель -->
+    <div class="container admin-container" id="admin-panel">
+        <div class="tabs">
+            <div class="tab active" onclick="openTab('content-tab')">Контент</div>
+            <div class="tab" onclick="openTab('design-tab')">Дизайн</div>
+            <div class="tab" onclick="openTab('sections-tab')">Разделы</div>
+            <div class="tab" onclick="openTab('menu-tab')">Меню</div>
+        </div>
+        
+        <div id="content-tab" class="tab-content active">
+            <h2>Управление контентом</h2>
+            <div id="content-editor">
+                <!-- Контент будет загружаться динамически -->
+            </div>
+        </div>
+        
+        <div id="design-tab" class="tab-content">
+            <h2>Настройки дизайна</h2>
+            <div class="form-group">
+                <label>Основной цвет:</label>
+                <input type="color" id="primary-color" value="#2c3e50" onchange="updateDesign()">
+            </div>
+            <div class="form-group">
+                <label>Акцентный цвет:</label>
+                <input type="color" id="secondary-color" value="#3498db" onchange="updateDesign()">
+            </div>
+            <div class="form-group">
+                <label>Цвет текста:</label>
+                <input type="color" id="text-color" value="#333333" onchange="updateDesign()">
+            </div>
+            <div class="form-group">
+                <label>Фоновый цвет:</label>
+                <input type="color" id="bg-color" value="#f5f5f5" onchange="updateDesign()">
+            </div>
+            <div class="form-group">
+                <label>Высота шапки (px):</label>
+                <input type="number" id="header-height" value="80" onchange="updateDesign()">
+            </div>
+            <button class="btn" onclick="saveDesign()">Сохранить дизайн</button>
+        </div>
+        
+        <div id="sections-tab" class="tab-content">
+            <h2>Управление разделами</h2>
+            <div class="form-group">
+                <label>Название раздела:</label>
+                <input type="text" id="new-section-title" placeholder="Введите название">
+            </div>
+            <div class="form-group">
+                <label>ID раздела (англ. буквы, без пробелов):</label>
+                <input type="text" id="new-section-id" placeholder="Например: services">
+            </div>
+            <div class="form-group">
+                <label>Содержимое раздела (HTML):</label>
+                <textarea class="edit-area" id="new-section-content" placeholder="<h2>Заголовок</h2><p>Текст...</p>"></textarea>
+            </div>
+            <button class="btn" onclick="addSection()">Добавить раздел</button>
+            
+            <h3 style="margin-top: 30px;">Существующие разделы</h3>
+            <div id="sections-list">
+                <!-- Разделы будут загружаться динамически -->
+            </div>
+        </div>
+        
+        <div id="menu-tab" class="tab-content">
+            <h2>Управление меню</h2>
+            <div class="form-group">
+                <label>Текст пункта:</label>
+                <input type="text" id="new-menu-text" placeholder="Например: Услуги">
+            </div>
+            <div class="form-group">
+                <label>Ссылка (ID раздела с #):</label>
+                <input type="text" id="new-menu-link" placeholder="Например: #services">
+            </div>
+            <button class="btn" onclick="addMenuItem()">Добавить пункт</button>
+            
+            <h3 style="margin-top: 30px;">Текущее меню</h3>
+            <ul id="menu-items-list">
+                <!-- Пункты меню будут загружаться динамически -->
+            </ul>
         </div>
     </div>
 
     <!-- Подвал -->
     <footer>
         <div class="container">
-            <p>&copy; 2023 МойСайт. Все права защищены.</p>
+            <p id="footer-text">&copy; 2023 МойСайт. Все права защищены.</p>
         </div>
     </footer>
 
     <script>
-        // Данные для входа (в реальном проекте храните на сервере)
+        // Данные сайта
+        let siteData = {
+            logo: "МойСайт",
+            design: {
+                primaryColor: "#2c3e50",
+                secondaryColor: "#3498db",
+                textColor: "#333",
+                bgColor: "#f5f5f5",
+                headerHeight: "80px"
+            },
+            sections: [
+                {
+                    id: "home",
+                    title: "Главная",
+                    content: "<h2>Добро пожаловать</h2><p>Это главная страница моего сайта. Здесь вы можете разместить любое содержимое.</p>"
+                },
+                {
+                    id: "about",
+                    title: "О нас",
+                    content: "<h2>О нашей компании</h2><p>Наша компания работает на рынке более 5 лет. Мы предлагаем качественные услуги.</p>"
+                },
+                {
+                    id: "contact",
+                    title: "Контакты",
+                    content: "<h2>Как с нами связаться</h2><p>Email: info@example.com<br>Телефон: +7 (123) 456-78-90</p>"
+                }
+            ],
+            menu: [
+                { text: "Главная", link: "#home" },
+                { text: "О нас", link: "#about" },
+                { text: "Контакты", link: "#contact" }
+            ],
+            footer: "&copy; 2023 МойСайт. Все права защищены."
+        };
+
+        // Данные для входа
         const adminCredentials = {
             login: "admin",
             password: "12345"
         };
-        
-        // Показываем/скрываем форму входа
-        document.getElementById('admin-login-link').addEventListener('click', function(e) {
-            e.preventDefault();
-            document.getElementById('login-modal').style.display = 'block';
+
+        // Инициализация сайта
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSite();
+            
+            // Обработчик входа
+            document.getElementById('admin-login-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (this.textContent === 'Вход') {
+                    document.getElementById('login-modal').style.display = 'block';
+                } else {
+                    logout();
+                }
+            });
         });
-        
-        function hideLogin() {
-            document.getElementById('login-modal').style.display = 'none';
+
+        // Загрузка сайта
+        function loadSite() {
+            // Применяем дизайн
+            applyDesign();
+            
+            // Загружаем логотип
+            document.getElementById('site-logo').textContent = siteData.logo;
+            
+            // Загружаем разделы
+            renderSections();
+            
+            // Загружаем меню
+            renderMenu();
+            
+            // Загружаем подвал
+            document.getElementById('footer-text').innerHTML = siteData.footer;
         }
-        
-        // Функция входа
+
+        // Применение дизайна
+        function applyDesign() {
+            const style = document.getElementById('site-styles');
+            const design = siteData.design;
+            
+            style.textContent = `
+                :root {
+                    --primary-color: ${design.primaryColor};
+                    --secondary-color: ${design.secondaryColor};
+                    --text-color: ${design.textColor};
+                    --bg-color: ${design.bgColor};
+                    --header-height: ${design.headerHeight};
+                }
+                ${style.textContent.split(':root')[1]}
+            `;
+        }
+
+        // Рендер разделов
+        function renderSections() {
+            const content = document.getElementById('site-content');
+            content.innerHTML = '';
+            
+            siteData.sections.forEach(section => {
+                const sectionHTML = `
+                    <section id="${section.id}" class="content-block">
+                        <div id="${section.id}-content">${section.content}</div>
+                        <div class="admin-panel" id="${section.id}-admin">
+                            <div class="admin-controls">
+                                <h3>Редактировать "${section.title}"</h3>
+                                <textarea class="edit-area" id="${section.id}-edit">${section.content}</textarea>
+                                <button class="btn" onclick="updateSectionContent('${section.id}')">Сохранить</button>
+                                <button class="btn btn-danger" onclick="deleteSection('${section.id}')">Удалить раздел</button>
+                            </div>
+                        </div>
+                    </section>
+                `;
+                content.innerHTML += sectionHTML;
+            });
+        }
+
+        // Рендер меню
+        function renderMenu() {
+            const menu = document.getElementById('main-menu');
+            menu.innerHTML = '';
+            
+            siteData.menu.forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="${item.link}">${item.text}</a>`;
+                menu.appendChild(li);
+            });
+            
+            // Добавляем кнопку входа
+            const li = document.createElement('li');
+            li.innerHTML = '<a href="#" id="admin-login-link">Вход</a>';
+            menu.appendChild(li);
+            
+            // Обновляем обработчик
+            document.getElementById('admin-login-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (this.textContent === 'Вход') {
+                    document.getElementById('login-modal').style.display = 'block';
+                } else {
+                    logout();
+                }
+            });
+        }
+
+        // Вход в админку
         function login() {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             
             if (username === adminCredentials.login && password === adminCredentials.password) {
-                // Показываем админ-панели
-                const adminPanels = document.querySelectorAll('.admin-panel');
-                adminPanels.forEach(panel => {
-                    panel.style.display = 'block';
-                });
+                // Показываем админ-панель
+                document.getElementById('admin-panel').style.display = 'block';
                 
                 // Меняем ссылку на выход
                 document.getElementById('admin-login-link').textContent = 'Выход';
-                document.getElementById('admin-login-link').onclick = logout;
+                
+                // Загружаем редактор контента
+                loadContentEditor();
+                loadSectionsList();
+                loadMenuItems();
                 
                 hideLogin();
                 alert('Вы успешно вошли в админку!');
@@ -297,33 +503,255 @@
                 alert('Неверный логин или пароль!');
             }
         }
-        
-        // Функция выхода
-        function logout(e) {
-            e.preventDefault();
-            
-            // Скрываем админ-панели
-            const adminPanels = document.querySelectorAll('.admin-panel');
-            adminPanels.forEach(panel => {
-                panel.style.display = 'none';
-            });
+
+        // Выход из админки
+        function logout() {
+            // Скрываем админ-панель
+            document.getElementById('admin-panel').style.display = 'none';
             
             // Возвращаем ссылку на вход
             document.getElementById('admin-login-link').textContent = 'Вход';
-            document.getElementById('admin-login-link').onclick = function(e) {
-                e.preventDefault();
-                document.getElementById('login-modal').style.display = 'block';
-            };
             
             alert('Вы вышли из админки!');
         }
-        
-        // Функция обновления контента
-        function updateContent(targetId, sourceId) {
-            const content = document.getElementById(sourceId).value;
-            document.getElementById(targetId).innerHTML = content;
-            alert('Изменения сохранены!');
+
+        // Скрыть форму входа
+        function hideLogin() {
+            document.getElementById('login-modal').style.display = 'none';
         }
+
+        // Обновление контента раздела
+        function updateSectionContent(sectionId) {
+            const newContent = document.getElementById(`${sectionId}-edit`).value;
+            
+            // Обновляем в данных
+            const section = siteData.sections.find(s => s.id === sectionId);
+            if (section) {
+                section.content = newContent;
+            }
+            
+            // Обновляем на странице
+            document.getElementById(`${sectionId}-content`).innerHTML = newContent;
+            
+            alert('Изменения сохранены!');
+            saveToLocalStorage();
+        }
+
+        // Загрузка редактора контента
+        function loadContentEditor() {
+            const editor = document.getElementById('content-editor');
+            editor.innerHTML = '';
+            
+            siteData.sections.forEach(section => {
+                editor.innerHTML += `
+                    <div class="section-item">
+                        <h3>${section.title} (${section.id})</h3>
+                        <textarea class="edit-area" id="editor-${section.id}">${section.content}</textarea>
+                        <button class="btn" onclick="updateSectionContent('${section.id}')">Сохранить</button>
+                    </div>
+                `;
+            });
+        }
+
+        // Переключение вкладок админки
+        function openTab(tabId) {
+            // Скрываем все вкладки
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Убираем активность у всех табов
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Показываем нужную вкладку
+            document.getElementById(tabId).classList.add('active');
+            
+            // Активируем таб
+            event.target.classList.add('active');
+        }
+
+        // Обновление дизайна в реальном времени
+        function updateDesign() {
+            const style = document.getElementById('site-styles');
+            const design = {
+                primaryColor: document.getElementById('primary-color').value,
+                secondaryColor: document.getElementById('secondary-color').value,
+                textColor: document.getElementById('text-color').value,
+                bgColor: document.getElementById('bg-color').value,
+                headerHeight: document.getElementById('header-height').value + 'px'
+            };
+            
+            style.textContent = `
+                :root {
+                    --primary-color: ${design.primaryColor};
+                    --secondary-color: ${design.secondaryColor};
+                    --text-color: ${design.textColor};
+                    --bg-color: ${design.bgColor};
+                    --header-height: ${design.headerHeight};
+                }
+                ${style.textContent.split(':root')[1]}
+            `;
+        }
+
+        // Сохранение дизайна
+        function saveDesign() {
+            siteData.design = {
+                primaryColor: document.getElementById('primary-color').value,
+                secondaryColor: document.getElementById('secondary-color').value,
+                textColor: document.getElementById('text-color').value,
+                bgColor: document.getElementById('bg-color').value,
+                headerHeight: document.getElementById('header-height').value + 'px'
+            };
+            
+            saveToLocalStorage();
+            alert('Дизайн сохранен!');
+        }
+
+        // Добавление нового раздела
+        function addSection() {
+            const title = document.getElementById('new-section-title').value;
+            const id = document.getElementById('new-section-id').value;
+            const content = document.getElementById('new-section-content').value;
+            
+            if (!title || !id || !content) {
+                alert('Заполните все поля!');
+                return;
+            }
+            
+            // Проверяем, что ID уникален
+            if (siteData.sections.some(s => s.id === id)) {
+                alert('Раздел с таким ID уже существует!');
+                return;
+            }
+            
+            // Добавляем новый раздел
+            siteData.sections.push({
+                id: id,
+                title: title,
+                content: content
+            });
+            
+            // Очищаем поля
+            document.getElementById('new-section-title').value = '';
+            document.getElementById('new-section-id').value = '';
+            document.getElementById('new-section-content').value = '';
+            
+            // Обновляем сайт
+            loadSite();
+            loadContentEditor();
+            loadSectionsList();
+            saveToLocalStorage();
+            
+            alert('Раздел успешно добавлен!');
+        }
+
+        // Загрузка списка разделов для админки
+        function loadSectionsList() {
+            const list = document.getElementById('sections-list');
+            list.innerHTML = '';
+            
+            siteData.sections.forEach(section => {
+                list.innerHTML += `
+                    <div class="section-item">
+                        <h3>${section.title} (ID: ${section.id})</h3>
+                        <button class="btn btn-danger" onclick="deleteSection('${section.id}')">Удалить</button>
+                    </div>
+                `;
+            });
+        }
+
+        // Удаление раздела
+        function deleteSection(sectionId) {
+            if (!confirm(`Удалить раздел "${sectionId}"?`)) return;
+            
+            // Удаляем из данных
+            siteData.sections = siteData.sections.filter(s => s.id !== sectionId);
+            
+            // Удаляем из меню (если есть)
+            siteData.menu = siteData.menu.filter(item => item.link !== `#${sectionId}`);
+            
+            // Обновляем сайт
+            loadSite();
+            loadContentEditor();
+            loadSectionsList();
+            loadMenuItems();
+            saveToLocalStorage();
+            
+            alert('Раздел удален!');
+        }
+
+        // Добавление пункта меню
+        function addMenuItem() {
+            const text = document.getElementById('new-menu-text').value;
+            const link = document.getElementById('new-menu-link').value;
+            
+            if (!text || !link) {
+                alert('Заполните все поля!');
+                return;
+            }
+            
+            // Добавляем новый пункт
+            siteData.menu.push({
+                text: text,
+                link: link
+            });
+            
+            // Очищаем поля
+            document.getElementById('new-menu-text').value = '';
+            document.getElementById('new-menu-link').value = '';
+            
+            // Обновляем меню
+            renderMenu();
+            loadMenuItems();
+            saveToLocalStorage();
+            
+            alert('Пункт меню добавлен!');
+        }
+
+        // Загрузка пунктов меню для админки
+        function loadMenuItems() {
+            const list = document.getElementById('menu-items-list');
+            list.innerHTML = '';
+            
+            siteData.menu.forEach((item, index) => {
+                list.innerHTML += `
+                    <li style="margin-bottom: 10px;">
+                        ${item.text} → ${item.link}
+                        <button class="btn btn-danger" style="padding: 2px 5px; font-size: 12px;" onclick="deleteMenuItem(${index})">Удалить</button>
+                    </li>
+                `;
+            });
+        }
+
+        // Удаление пункта меню
+        function deleteMenuItem(index) {
+            if (!confirm(`Удалить этот пункт меню?`)) return;
+            
+            siteData.menu.splice(index, 1);
+            renderMenu();
+            loadMenuItems();
+            saveToLocalStorage();
+            
+            alert('Пункт меню удален!');
+        }
+
+        // Сохранение в LocalStorage
+        function saveToLocalStorage() {
+            localStorage.setItem('siteData', JSON.stringify(siteData));
+        }
+
+        // Загрузка из LocalStorage
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem('siteData');
+            if (savedData) {
+                siteData = JSON.parse(savedData);
+            }
+        }
+
+        // При загрузке проверяем LocalStorage
+        loadFromLocalStorage();
     </script>
 </body>
 </html>
